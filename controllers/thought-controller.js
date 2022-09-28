@@ -18,57 +18,54 @@ const thoughtController = {
                 res.status(400).json(err);
             });
     },
-   
-    // add thought to user. the $push method (adds data to an array) and allows us to add the thought's _id to the specific user we want to update. (MongoDB-based functions start with $ to make them stand out)
-    addThought({ params, body }, res) {
-        console.log(body);
-        Thought.create(body)
-            .then(({ _id }) => {
-                return User.findOneAndUpdate(
-                    { _id: params.userId },
-                    { $push: { thoughts: _id } },
-                    { new: true }
-                );
+
+    //get single thought by Id
+    getThoughtById({ params }, res) { //here we are desctucturing params out of req 
+        Thought.findOne({ _id: params.id })
+            .populate({
+                path: 'thoughts', //shiould this be user or thoughts?
+                select: '-__v'
             })
-            .then(dbUserData => {
-                if (!dbUserData) {
-                    res.status(404).json({ message: 'No user found with this id!' });
+            .select('-__v')
+            .then(dbThoughtData => {
+                if (!dbThoughtData) {
+                    res.status(404).json({ message: 'No thought found with this id!' });
                     return;
                 }
-                res.json(dbUserData);
+                res.json(dbThoughtData);
             })
-            .catch(err => res.json(err));
+            .catch(err => {
+                console.log(err);
+                res.status(400).json(err);
+            });
     },
 
-    addThought({ params, body }, res) {
+    // add thought to user. the $push method (adds data to an array) and allows us to add the thought's _id to the specific user we want to update. (MongoDB-based functions start with $ to make them stand out)
+    addThought({ body }, res) {
+        console.log(body);
+        Thought.create(body)
+            .then(dbThoughtData =>
+                res.json(dbThoughtData))
+            .catch(err => res.status(400).json(err));
+    },
+
+    updateThought({ params, body }, res) {
         Thought.findOneAndUpdate(
-            { _id: params.thoughtId },
+            { _id: params.thoughtId }, body,
             { $push: { replies: body } },
             { new: true, runValidators: true }
         )
-            .then(dbUserData => {
-                if (!dbUserData) {
+            .then(dbThoughtData => {
+                if (!dbThoughtData) {
                     res.status(404).json({ message: 'No user found with this id!' });
                     return;
                 }
-                res.json(dbUserData);
+                res.json(dbThoughtData);
             })
             .catch(err => res.json(err));
     },
 
-    // remove thought
-    removeThought({ params }, res) {
-        Thought.findOneAndUpdate(
-            { _id: params.thoughtId },
-            // $pull operator removes the specific thought from the replies array where the thoughtId matches the value of params.thoughtId passed in from the route
-            { $pull: { replies: { thoughtId: params.thoughtId } } },
-            { new: true }
-        )
-            .then(dbUserData => res.json(dbUserData))
-            .catch(err => res.json(err));
-    },
-
-    // remove thought. first we delete the thought (while also returning it's data), then we'll use its _id to remove it from the user using $pull 
+        // remove thought. first we delete the thought (while also returning it's data), then we'll use its _id to remove it from the user using $pull 
     removeThought({ params }, res) {
         Thought.findOneAndDelete({ _id: params.thoughtId })
             .then(deletedThought => {
@@ -77,16 +74,16 @@ const thoughtController = {
                 }
                 return User.findOneAndUpdate(
                     { _id: params.userId },
-                    { $pull: { thoughts: params.thoughtId } },
+                    { $pull: { thoughts: params.thoughtId } }, // $pull operator removes the specific thought from the replies array where the thoughtId matches the value of params.thoughtId passed in from the route
                     { new: true }
                 );
             })
-            .then(dbUserData => {
-                if (!dbUserData) {
+            .then(dbThoughtData => {
+                if (!dbThoughtData) {
                     res.status(404).json({ message: 'No user found with this id!' });
                     return;
                 }
-                res.json(dbUserData);
+                res.json(dbThoughtData);
             })
             .catch(err => res.json(err));
     }
