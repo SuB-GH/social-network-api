@@ -65,6 +65,8 @@ const thoughtController = {
             .catch(err => res.json(err));
     },
 
+    //add reactions here
+
         // remove thought. first we delete the thought (while also returning it's data), then we'll use its _id to remove it from the user using $pull 
     removeThought({ params }, res) {
         Thought.findOneAndDelete({ _id: params.thoughtId })
