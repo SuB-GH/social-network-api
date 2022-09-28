@@ -1,14 +1,17 @@
 const { Schema, model, Types } = require('mongoose'); // this only imports the schema constructor and model function - do i need anything else?
-const dateFormat = require('../utils/dateFormat');
+const dateFormat = require('../utils/dateFormat'); //use moment instead?
 
+//complete reaction schema here...
+const ReactionSchema = new Schema(
+    {})
 
 const ThoughtSchema = new Schema(
     {
         thoughtText: {
             type: String,
             required: true,
-            // minLength: 1,
-            // maxLength: 280,
+            minLength: 1,
+            maxLength: 280,
         },
 
         createdAt: {
@@ -20,38 +23,28 @@ const ThoughtSchema = new Schema(
         username: {
             type: String,
             required: true,
+            ref: 'User'
         },
 
         // is the syntax below correct?
-        reactions: [],
+        reactions: [ReactionSchema],
+    },
         // Array of nested documents created with the reactionSchema
         // Schema Settings
         // Create a virtual called reactionCount that retrieves the length of the thought's reactions array field on query.
-
-
-        // is the syntax below correct?
-        friends: [],
-        // the "parent" Thought, is associated with "child" friends here. ref tells it to search the Thought document
-        friends: [
-            {
-                type: Schema.Types.ObjectId,
-                ref: 'Thought'
-            }
-        ],
-    },
     {
         toJSON: {
             virtuals: true,
             // getters: true
         },
+        id: false
     }
-);
-
+)
 
 // tallies up the number of Thoughts' friends
-// ThoughtSchema.virtual('friendCount').get(function () {
-//     return this.friends.length;
-// });
+ThoughtSchema.virtual('friendCount').get(function () {
+    return this.friends.length;
+});
 
 // create the Thought model using the ThoughtSchema
 const Thought = model('Thought', ThoughtSchema);
