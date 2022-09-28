@@ -3,7 +3,28 @@ const dateFormat = require('../utils/dateFormat'); //use moment instead?
 
 //complete reaction schema here...
 const ReactionSchema = new Schema(
-    {})
+    {
+        reactionId: {
+            type: Schema.Types.ObjectId,
+            default: () => new Types.ObjectId()
+        },
+        reactionBody: {
+            type: String,
+            required: true,
+            trim: true,
+            minLength: 1,
+            maxLength: 280
+        },
+        username: {
+            type: String,
+            required: true,
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now,
+            get: createdAtVal => dateFormat(createdAtVal) //getter method to format the timestamp
+        }
+    })
 
 const ThoughtSchema = new Schema(
     {
@@ -29,13 +50,13 @@ const ThoughtSchema = new Schema(
         // is the syntax below correct?
         reactions: [ReactionSchema],
     },
-        // Array of nested documents created with the reactionSchema
-        // Schema Settings
-        // Create a virtual called reactionCount that retrieves the length of the thought's reactions array field on query.
+    // Array of nested documents created with the reactionSchema
+    // Schema Settings
+    // Create a virtual called reactionCount that retrieves the length of the thought's reactions array field on query.
     {
         toJSON: {
             virtuals: true,
-            // getters: true
+            getters: true
         },
         id: false
     }
