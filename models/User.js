@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose'); // this only imports the schema constructor and model function - do i need anything else?
-const dateFormat = require('../utils/dateFormat');
+const dateFormat = require('../utils/dateFormat'); //use moment instead?
 
 
 const UserSchema = new Schema(
@@ -15,13 +15,13 @@ const UserSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-            validate: {
-                validator: () => Promise.resolve(false),
-                message: 'Email validation failed'
-            }
+            trim: true,
+            match: [/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/]
+            // validate: {
+            //     validator: () => Promise.resolve(false),
+            //     message: 'Email validation failed'
+            // }
         },
-        // is the syntax below correct?
-        thoughts: [],
         // the "parent" User, is associated with "child" thoughts here. ref tells it to search the Thought document
         thoughts: [
             {
@@ -30,8 +30,6 @@ const UserSchema = new Schema(
             }
         ],
 
-        // is the syntax below correct?
-        friends: [],
         // the "parent" User, is associated with "child" friends here. ref tells it to search the User document
         friends: [
             {
@@ -45,14 +43,14 @@ const UserSchema = new Schema(
             virtuals: true,
             // getters: true
         },
+        id: false
     }
 );
 
-
 // tallies up the number of users' friends
-UserSchema.virtual('friendCount').get(function () {
-    return this.friends.length;
-});
+// UserSchema.virtual('friendCount').get(function () {
+//     return this.friends.length;
+// });
 
 // create the User model using the UserSchema
 const User = model('User', UserSchema);

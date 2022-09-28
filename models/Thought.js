@@ -7,8 +7,8 @@ const ThoughtSchema = new Schema(
         thoughtText: {
             type: String,
             required: true,
-            minLength: 1,
-            maxLength: 280,
+            // minLength: 1,
+            // maxLength: 280,
         },
 
         createdAt: {
@@ -49,9 +49,9 @@ const ThoughtSchema = new Schema(
 
 
 // tallies up the number of Thoughts' friends
-ThoughtSchema.virtual('friendCount').get(function () {
-    return this.friends.length;
-});
+// ThoughtSchema.virtual('friendCount').get(function () {
+//     return this.friends.length;
+// });
 
 // create the Thought model using the ThoughtSchema
 const Thought = model('Thought', ThoughtSchema);

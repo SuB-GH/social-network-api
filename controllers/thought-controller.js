@@ -23,7 +23,7 @@ const thoughtController = {
             .catch(err => res.json(err));
     },
 
-    addReply({ params, body }, res) {
+    addThought({ params, body }, res) {
         Thought.findOneAndUpdate(
           { _id: params.thoughtId },
           { $push: { replies: body } },
@@ -39,12 +39,12 @@ const thoughtController = {
           .catch(err => res.json(err));
       },
 
-      // remove reply
-removeReply({ params }, res) {
+      // remove thought
+removeThought({ params }, res) {
     Thought.findOneAndUpdate(
       { _id: params.thoughtId },
-// $pull operator removes the specific reply from the replies array where the replyId matches the value of params.replyId passed in from the route
-      { $pull: { replies: { replyId: params.replyId } } },
+// $pull operator removes the specific thought from the replies array where the thoughtId matches the value of params.thoughtId passed in from the route
+      { $pull: { replies: { thoughtId: params.thoughtId } } },
       { new: true }
     )
       .then(dbUserData => res.json(dbUserData))
