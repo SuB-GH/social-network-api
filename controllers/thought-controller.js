@@ -66,6 +66,37 @@ const thoughtController = {
     },
 
     //add reactions here
+    addReaction ({ params, body }, res) {
+        Thought.findOneAndUpdate(
+            { _id: params.thoughtId },
+            { $push: { reactions: body } }, // push operator adds reaction to the array
+            { new: true, runValidators: true }
+        )
+        .then(dbThoughtData => {
+            if (!dbThoughtData) {
+                res.status(404).json({ message: 'No user found with this id!' });
+                return;
+            }
+            res.json(dbThoughtData)
+    })
+    .catch(err => res.json(err));
+},
+
+    deleteReaction ({ params, body }, res) {
+        Thought.findOneAndUpdate(
+            { _id: params.thoughtId },
+            { $pull: { reactions: body } }, // pull operator removes the thought from the array
+            { new: true, runValidators: true }
+        )
+        .then(dbThoughtData => {
+            if (!dbThoughtData) {
+                res.status(404).json({ message: 'No user found with this id!' });
+                return;
+            }
+            res.json(dbThoughtData)
+    })
+    .catch(err => res.json(err));
+},
 
         // remove thought. first we delete the thought (while also returning it's data), then we'll use its _id to remove it from the user using $pull 
     removeThought({ params }, res) {
@@ -76,7 +107,7 @@ const thoughtController = {
                 }
                 return User.findOneAndUpdate(
                     { _id: params.userId },
-                    { $pull: { thoughts: params.thoughtId } }, // $pull operator removes the specific thought from the replies array where the thoughtId matches the value of params.thoughtId passed in from the route
+                    { $pull: { thoughts: params.thoughtId } }, // $pull operator removes the specific thought from the array where the thoughtId matches the value of params.thoughtId passed in from the route
                     { new: true }
                 );
             })
