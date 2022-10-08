@@ -41,13 +41,29 @@ const thoughtController = {
     },
 
     // add thought to user. the $push method (adds data to an array) and allows us to add the thought's _id to the specific user we want to update. (MongoDB-based functions start with $ to make them stand out)
-    addThought({ body }, res) {
-        console.log(body);
-        Thought.create(body)
-            .then(dbThoughtData =>
-                res.json(dbThoughtData))
-            .catch(err => res.status(400).json(err));
-    },
+    // addThought({ body }, res) {
+    //     console.log(body);
+    //     Thought.create(body)
+    //         .then(dbThoughtData =>
+    //             res.json(dbThoughtData))
+    //         .catch(err => res.status(400).json(err));
+    // },
+
+    addThought ({ params, body }, res) {
+        User.findOneAndUpdate(
+            { _id: params.userId },
+            { $push: { reactions: body } }, // push operator adds reaction to the array
+            { new: true, runValidators: true }
+        )
+        .then(dbThoughtData => {
+            if (!dbThoughtData) {
+                res.status(404).json({ message: 'No user found with this id!' });
+                return;
+            }
+            res.json(dbThoughtData)
+    })
+    .catch(err => res.json(err));
+},
 
     updateThought({ params, body }, res) {
         Thought.findOneAndUpdate(
