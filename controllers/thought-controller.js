@@ -16,12 +16,8 @@ const thoughtController = {
 
     //get single thought by Id
     getThoughtById({ params }, res) { //here we are desctucturing params out of req 
-        Thought.findOne({ _id: params.id })
-            .populate({
-                path: 'thoughts', //shiould this be user or thoughts?
-                select: '-__v'
-            })
-            .select('-__v')
+        Thought.findOne({ _id: params.thoughtId })
+        
             .then(dbThoughtData => {
                 if (!dbThoughtData) {
                     res.status(404).json({ message: 'No thought found with this id!' });
@@ -106,7 +102,7 @@ const thoughtController = {
     // remove thought. first we delete the thought (while also returning it's data), then we'll use its _id to remove it from the user using $pull 
 
     removeThought({ params }, res) {
-        Thought.findOneAndUpdate(
+        return Thought.findOneAndUpdate(
             { _id: params.thoughtId },
             { $pull: { thoughts: params.thoughtId } }, // pull operator removes from the array
             { new: true }
