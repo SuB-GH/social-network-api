@@ -15,12 +15,17 @@ const ReactionSchema = new Schema(
             minLength: 1,
             maxLength: 280
         },
-        userId: {
-            type: Schema.Types.ObjectId,
+
+        userName: {
+            type: String,
             required: true,
-            ref: 'User'
         },
-        
+        // userId: {
+        //     type: Schema.Types.ObjectId,
+        //     required: true,
+        //     ref: 'User'
+        // },
+
         createdAt: {
             type: Date,
             default: Date.now,
@@ -43,10 +48,9 @@ const ThoughtSchema = new Schema(
             get: createdAtVal => dateFormat(createdAtVal)
         },
 
-        userId: {
-            type: Schema.Types.ObjectId,
+        userName: {
+            type: String,
             required: true,
-            ref: 'User'
         },
 
         // is the syntax below correct?
@@ -64,9 +68,9 @@ const ThoughtSchema = new Schema(
     }
 )
 
-// tallies up the number of Thoughts' friends
-ThoughtSchema.virtual('friendCount').get(function () {
-    return this.friends.length;
+// tallies up the number of Thoughts' reactions
+ThoughtSchema.virtual('reactionCount').get(function () {
+    //return this.reaction.length;
 });
 
 // create the Thought model using the ThoughtSchema
