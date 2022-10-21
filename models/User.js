@@ -16,10 +16,7 @@ const UserSchema = new Schema(
             unique: true,
             trim: true,
             match: [/^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/]
-            // validate: {
-            //     validator: () => Promise.resolve(false),
-            //     message: 'Email validation failed'
-            // }
+            
         },
         // the "parent" User, is associated with "child" thoughts here. ref tells it to search the Thought document
         thoughts: [

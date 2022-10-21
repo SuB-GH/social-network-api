@@ -20,12 +20,7 @@ const ReactionSchema = new Schema(
             type: String,
             required: true,
         },
-        // userId: {
-        //     type: Schema.Types.ObjectId,
-        //     required: true,
-        //     ref: 'User'
-        // },
-
+      
         createdAt: {
             type: Date,
             default: Date.now,
@@ -56,9 +51,7 @@ const ThoughtSchema = new Schema(
         // is the syntax below correct?
         reactions: [ReactionSchema],
     },
-    // Array of nested documents created with the reactionSchema
-    // Schema Settings
-    // Create a virtual called reactionCount that retrieves the length of the thought's reactions array field on query.
+   
     {
         toJSON: {
             virtuals: true,

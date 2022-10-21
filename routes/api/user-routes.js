@@ -17,11 +17,6 @@ router
     .route('/')
     .get(getAllUsers) //GET all users || this works: http://localhost:3001/api/users
     .post(createUser); //POST a new user, example below
-//{
-//   "username": "lernantino",
-//   "email": "lernantino@gmail.com"
-// }
-
 
 // Set up GET one, PUT, and DELETE at /api/users/:id
 router

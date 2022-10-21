@@ -99,20 +99,6 @@ const thoughtController = {
             .catch(err => res.json(err));
     },
 
-    // remove thought. first we delete the thought (while also returning it's data), then we'll use its _id to remove it from the user using $pull 
-
-    // removeThought({ params }, res) {
-    //     Thought.findOneAndUpdate(
-    //         { _id: params.thoughtId },
-    //         { $pull: { thoughts: params.thoughtId } }, // pull operator removes from the array
-    //         { new: true }
-    //     )
-    //         .then(dbUserData =>
-    //             res.json(dbUserData))
-    //         .catch(err => res.json(err));
-    // },
-
-
     removeThought({ params }, res) {
         console.log("params= ", params);
         Thought.findOneAndDelete({ _id: params.thoughtId })
@@ -135,8 +121,6 @@ const thoughtController = {
           })
           .catch(err => res.json(err));
       },
-
-    
 
 };
 module.exports = thoughtController;
