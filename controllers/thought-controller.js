@@ -101,16 +101,41 @@ const thoughtController = {
 
     // remove thought. first we delete the thought (while also returning it's data), then we'll use its _id to remove it from the user using $pull 
 
+    // removeThought({ params }, res) {
+    //     Thought.findOneAndUpdate(
+    //         { _id: params.thoughtId },
+    //         { $pull: { thoughts: params.thoughtId } }, // pull operator removes from the array
+    //         { new: true }
+    //     )
+    //         .then(dbUserData =>
+    //             res.json(dbUserData))
+    //         .catch(err => res.json(err));
+    // },
+
+
     removeThought({ params }, res) {
-        return Thought.findOneAndUpdate(
-            { _id: params.thoughtId },
-            { $pull: { thoughts: params.thoughtId } }, // pull operator removes from the array
-            { new: true }
-        )
-            .then(dbUserData =>
-                res.json(dbUserData))
-            .catch(err => res.json(err));
-    },
+        Thought.findOneAndDelete({ _id: params.thoughtId })
+          .then(deletedThought => {
+            if (!deletedThought) {
+              return res.status(404).json({ message: 'No thought with this id!' });
+            }
+            return User.findOneAndUpdate(
+              { _id: params.userId },
+              { $pull: { thought: params.thoughtId } },
+              { new: true }
+            );
+          })
+          .then(dbUserData => {
+            if (!dbUserData) {
+              res.status(404).json({ message: 'No user found with this id!' });
+              return;
+            }
+            res.json(dbUserData);
+          })
+          .catch(err => res.json(err));
+      },
+
+    
 
 };
 module.exports = thoughtController;
